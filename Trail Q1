@@ -1,0 +1,89 @@
+def main():
+    # 1. Initialize core variables
+    total_bill = 2400000
+    installments_allowed = 8
+    outstanding_balance = total_bill
+    payment_history = []  # To store details for the receipt
+
+    print("==============================================")
+    print("      NWSC WATER BILL MANAGEMENT SYSTEM       ")
+    print("==============================================\n")
+
+    # 2. Capture client details and the standard monthly payment
+    client_name = input("Enter Client Name: ")
+    account_number = input("Enter Account Number: ")
+
+    # Calculate standard expected amount for reference (2,400,000 / 8 = 300,000)
+    expected_monthly = total_bill // installments_allowed
+    print(f"\nNote: The standard expected installment is {expected_monthly:,} Ugx per month.")
+    
+    # Capture the actual standard amount the client agrees to pay monthly
+    while True:
+        try:
+            standard_payment = float(input("Enter the agreed standard monthly payment amount (Ugx): "))
+            if standard_payment <= 0:
+                print("Payment must be greater than zero. Please try again.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+    print("\n--- Processing Installments ---")
+
+    # 3. Process payments dynamically
+    # The loop runs while there's a balance, but we keep track of the installment count
+    month = 1
+    while outstanding_balance > 0:
+        print(f"\n--- Month {month} ---")
+        print(f"Current Outstanding Bill: {outstanding_balance:,.2f} Ugx")
+        
+        # Determine payment for this month (handles if the final balance is less than standard payment)
+        current_payment = min(standard_payment, outstanding_balance)
+        
+        input(f"Press Enter to record the payment of {current_payment:,.2f} Ugx...")
+        
+        # Deduct from bill
+        previous_balance = outstanding_balance
+        outstanding_balance -= current_payment
+        
+        # Record transaction details for the receipt
+        payment_history.append({
+            "month": month,
+            "paid": current_payment,
+            "remaining": outstanding_balance
+        })
+        
+        # Display the deduction update
+        print(f"Payment Recorded Successfully!")
+        print(f"Amount Deducted: {current_payment:,.2f} Ugx")
+        print(f"New Outstanding Bill: {outstanding_balance:,.2f} Ugx")
+        
+        month += 1
+
+    # 4. Reconnection notification
+    print("\n==============================================")
+    print("STATUS UPDATE:")
+    print("The entire bill has been successfully cleared to 0.00 Ugx!")
+    print("NOTIFICATION: Your water supply will be RECONNECTED immediately.")
+    print("==============================================\n")
+
+    # 5. Print out the systematic receipt
+    print("\n" + "="*50)
+    print("                 NWSC RECEIPT                 ")
+    print("="*50)
+    print(f" Client Name:    {client_name}")
+    print(f" Account Number: {account_number}")
+    print(f" Initial Debt:   {total_bill:,.2f} Ugx")
+    print("-"*50)
+    print(f"{'Month':<8}{'Amount Paid (Ugx)':<20}{'Balance Remaining (Ugx)':<22}")
+    print("-"*50)
+    
+    for record in payment_history:
+        print(f"Month {record['month']:<3}   {record['paid']:<17,.2f}   {record['remaining']:<22,.2f}")
+        
+    print("="*50)
+    print("         Thank you for paying your bill!      ")
+    print("="*50)
+
+if __name__ == "__main__":
+    main()
